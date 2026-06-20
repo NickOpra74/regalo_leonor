@@ -1,0 +1,339 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Para ti, mi amor 💙</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <style>
+    /* ── PÁGINA MENÚ ── */
+    body {
+      background: linear-gradient(160deg, #EBF5FB 0%, #F4ECF7 50%, #FEF0F2 100%);
+      min-height: 100vh;
+      padding: 0 0 80px;
+    }
+
+    /* ── HEADER ── */
+    .menu-header {
+      text-align: center;
+      padding: 52px 20px 32px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .menu-header .greeting {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.2rem;
+      color: #C39BD3;
+      margin-bottom: 8px;
+      display: block;
+    }
+
+    .menu-header h1 {
+      font-size: 2.4rem;
+      color: #3D4A5C;
+      font-style: italic;
+      line-height: 1.2;
+      margin-bottom: 12px;
+    }
+
+    .menu-header p {
+      color: #6B7A8D;
+      font-size: 1rem;
+      max-width: 380px;
+      margin: 0 auto;
+      line-height: 1.6;
+    }
+
+    /* ── GRID DE CARDS ── */
+    .menu-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+      gap: 22px;
+      max-width: 900px;
+      margin: 0 auto;
+      padding: 10px 24px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .menu-card {
+      background: rgba(255,255,255,0.78);
+      backdrop-filter: blur(12px);
+      -webkit-backdrop-filter: blur(12px);
+      border-radius: 22px;
+      padding: 32px 28px;
+      text-align: center;
+      cursor: pointer;
+      box-shadow: 0 4px 20px rgba(133,193,233,0.15);
+      border: 1px solid rgba(255,255,255,0.7);
+      transition: transform 0.3s cubic-bezier(0.34,1.56,0.64,1), box-shadow 0.3s ease;
+      opacity: 0;
+      transform: translateY(20px);
+      text-decoration: none;
+      display: block;
+    }
+
+    .menu-card.fade-in-up {
+      animation: fadeInUp 0.6s ease forwards;
+    }
+
+    .menu-card:hover {
+      transform: translateY(-6px) scale(1.02);
+      box-shadow: 0 12px 36px rgba(133,193,233,0.28);
+    }
+
+    .card-icon {
+      font-size: 2.8rem;
+      display: block;
+      margin-bottom: 16px;
+      animation: float 3.5s ease-in-out infinite;
+    }
+
+    .menu-card:nth-child(2) .card-icon { animation-delay: 0.5s; }
+    .menu-card:nth-child(3) .card-icon { animation-delay: 1s; }
+    .menu-card:nth-child(4) .card-icon { animation-delay: 1.5s; }
+    .menu-card:nth-child(5) .card-icon { animation-delay: 0.8s; }
+
+    .menu-card h2 {
+      font-size: 1.25rem;
+      color: #3D4A5C;
+      margin-bottom: 8px;
+    }
+
+    .menu-card p {
+      font-size: 0.88rem;
+      color: #6B7A8D;
+      line-height: 1.5;
+      margin-bottom: 20px;
+    }
+
+    .card-tag {
+      display: inline-block;
+      font-size: 0.75rem;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      padding: 5px 14px;
+      border-radius: 50px;
+      text-transform: uppercase;
+    }
+
+    .tag-azul  { background: #C8E6FA; color: #2E86C1; }
+    .tag-rosa  { background: #F7CAD0; color: #C0392B; }
+    .tag-morado { background: #D7BDE2; color: #6C3483; }
+
+    /* ── MODALES DE CARTAS ── */
+    .carta-content {
+      text-align: center;
+    }
+
+    .carta-icon {
+      font-size: 2.5rem;
+      display: block;
+      margin-bottom: 16px;
+      animation: pulse-soft 2.5s ease-in-out infinite;
+    }
+
+    .carta-content h2 {
+      font-size: 1.4rem;
+      color: #3D4A5C;
+      margin-bottom: 18px;
+    }
+
+    .carta-text {
+      font-family: 'Lato', sans-serif;
+      font-size: 0.95rem;
+      color: #5D6D7E;
+      line-height: 1.8;
+      text-align: left;
+      background: linear-gradient(135deg, rgba(200,230,250,0.15), rgba(247,202,208,0.15));
+      border-left: 3px solid var(--rosa-medio);
+      border-radius: 0 12px 12px 0;
+      padding: 16px 18px;
+      margin-bottom: 20px;
+    }
+
+    .carta-firma {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.3rem;
+      color: #C39BD3;
+      text-align: right;
+    }
+
+    /* ── SEPARADOR ── */
+    .section-sep {
+      text-align: center;
+      margin: 36px auto 12px;
+      max-width: 900px;
+      padding: 0 24px;
+      position: relative;
+      z-index: 10;
+    }
+
+    .section-sep span {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.1rem;
+      color: #C39BD3;
+      background: linear-gradient(160deg, #EBF5FB, #F4ECF7);
+      padding: 0 16px;
+      position: relative;
+      z-index: 1;
+    }
+
+    .section-sep::before {
+      content: '';
+      display: block;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #D7BDE2, transparent);
+      position: absolute;
+      top: 50%; left: 24px; right: 24px;
+    }
+  </style>
+</head>
+<body>
+
+  <div class="petal-container"></div>
+
+  <!-- Audio -->
+  <audio id="bg-audio" loop preload="auto">
+    <source src="{{ url_for('static', filename='assets/audio/musica.mp3') }}" type="audio/mpeg">
+  </audio>
+
+  <!-- Player flotante -->
+  <div id="audio-player-container">
+    <button id="audio-toggle-btn" title="Música">🎵</button>
+    <span class="audio-label">Nuestra canción</span>
+  </div>
+
+  <!-- HEADER -->
+  <header class="menu-header">
+    <span class="greeting">Un pequeño mundo para ti</span>
+    <h1>Hola, mi amor 💙</h1>
+    <p>Aquí guardé todo lo que siento por ti. Explora cada rincón con calma.</p>
+  </header>
+
+  <!-- CARTAS DE AMOR -->
+  <div class="section-sep"><span>💌 Mis cartitas para ti</span></div>
+
+  <div class="menu-grid">
+
+    <!-- Carta 1 -->
+    <div class="menu-card" data-modal="modal-carta1">
+      <span class="card-icon">💙</span>
+      <h2>Lo primero que sentí</h2>
+      <p>El momento en que todo cambió para mí</p>
+      <span class="card-tag tag-azul">Abrir carta</span>
+    </div>
+
+    <!-- Carta 2 -->
+    <div class="menu-card" data-modal="modal-carta2">
+      <span class="card-icon">🌸</span>
+      <h2>Lo que más amo de ti</h2>
+      <p>Todo lo que me enamora cada día</p>
+      <span class="card-tag tag-rosa">Abrir carta</span>
+    </div>
+
+    <!-- Carta 3 -->
+    <div class="menu-card" data-modal="modal-carta3">
+      <span class="card-icon">🌙</span>
+      <h2>Lo que sueño contigo</h2>
+      <p>El futuro que imagino a tu lado</p>
+      <span class="card-tag tag-morado">Abrir carta</span>
+    </div>
+
+    <!-- Carta 4 -->
+    <div class="menu-card" data-modal="modal-carta4">
+      <span class="card-icon">✨</span>
+      <h2>Gracias por existir</h2>
+      <p>Todo lo que me has dado sin darte cuenta</p>
+      <span class="card-tag tag-rosa">Abrir carta</span>
+    </div>
+
+  </div>
+
+  <!-- ALMANAQUE -->
+  <div class="section-sep" style="margin-top:44px;"><span>📖 Nuestros recuerdos</span></div>
+
+  <div class="menu-grid" style="max-width:520px;">
+    <a href="{{ url_for('almanaque') }}" class="menu-card" style="animation-delay:0.2s;">
+      <span class="card-icon">📸</span>
+      <h2>Nuestro álbum</h2>
+      <p>Cada mes que hemos vivido juntos, guardado para siempre</p>
+      <span class="card-tag tag-azul">Ver álbum →</span>
+    </a>
+  </div>
+
+
+  <!-- ══════════ MODALES ══════════ -->
+
+  <!-- Carta 1 -->
+  <div id="modal-carta1" class="modal-overlay">
+    <div class="modal-box">
+      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active'); document.body.style.overflow=''">✕</button>
+      <div class="carta-content">
+        <span class="carta-icon">💙</span>
+        <h2>Lo primero que sentí</h2>
+        <div class="carta-text">
+          Hubo un instante en que te miré y algo dentro de mí se acomodó en un lugar que no sabía que existía. No fue un rayo, fue algo más suave: como cuando una canción te llega sin que estés buscando nada y de pronto ya no puedes imaginar el silencio.
+          <br><br>
+          Desde ese día empecé a notar cosas pequeñas tuyas que no debería notar, y me di cuenta de que ya era tarde para no quererte.
+        </div>
+        <p class="carta-firma">Con todo mi corazón 💙</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carta 2 -->
+  <div id="modal-carta2" class="modal-overlay">
+    <div class="modal-box">
+      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active'); document.body.style.overflow=''">✕</button>
+      <div class="carta-content">
+        <span class="carta-icon">🌸</span>
+        <h2>Lo que más amo de ti</h2>
+        <div class="carta-text">
+          Amo cómo te ríes sin reservas. Amo que te importan las cosas de verdad. Amo la forma en que ves el mundo, con esa mezcla de ternura y fuerza que pocas personas tienen.
+          <br><br>
+          Amo que existas, que estés aquí, que seas tan tú. Y amo que por alguna razón hermosa, decidiste quedarte cerca de mí.
+        </div>
+        <p class="carta-firma">Siempre tuyo 🌸</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carta 3 -->
+  <div id="modal-carta3" class="modal-overlay">
+    <div class="modal-box">
+      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active'); document.body.style.overflow=''">✕</button>
+      <div class="carta-content">
+        <span class="carta-icon">🌙</span>
+        <h2>Lo que sueño contigo</h2>
+        <div class="carta-text">
+          Sueño con más tardes juntos, con más risas tontas, con seguir conociéndote en cada nueva versión que vayas siendo.
+          <br><br>
+          Sueño con que cuando lleguen días difíciles, podamos apoyarnos. Y sueño, sobre todo, con que sigas eligiéndome así como yo te elijo a ti, cada mañana, sin dudarlo.
+        </div>
+        <p class="carta-firma">Contigo siempre 🌙</p>
+      </div>
+    </div>
+  </div>
+
+  <!-- Carta 4 -->
+  <div id="modal-carta4" class="modal-overlay">
+    <div class="modal-box">
+      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active'); document.body.style.overflow=''">✕</button>
+      <div class="carta-content">
+        <span class="carta-icon">✨</span>
+        <h2>Gracias por existir</h2>
+        <div class="carta-text">
+          Gracias por hacer que los días normales se sientan especiales. Por las conversaciones largas, por tu paciencia, por la calidez que traes sin ni siquiera intentarlo.
+          <br><br>
+          Gracias por ser la persona que eres. Este regalo lo hice con todo mi amor para decirte que te quiero más de lo que sé expresar.
+        </div>
+        <p class="carta-firma">Te amo, amor ✨</p>
+      </div>
+    </div>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+</body>
+</html>

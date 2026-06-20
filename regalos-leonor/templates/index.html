@@ -1,0 +1,232 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Para ti 💙</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <style>
+    /* ── PÁGINA LOGIN ── */
+    body {
+      background: linear-gradient(145deg, #C8E6FA 0%, #D7BDE2 40%, #F7CAD0 100%);
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      min-height: 100vh;
+    }
+
+    .login-card {
+      position: relative;
+      z-index: 10;
+      background: rgba(255,255,255,0.72);
+      backdrop-filter: blur(16px);
+      -webkit-backdrop-filter: blur(16px);
+      border-radius: 28px;
+      padding: 52px 44px;
+      width: 100%;
+      max-width: 420px;
+      box-shadow:
+        0 8px 32px rgba(133,193,233,0.25),
+        0 0 0 1px rgba(255,255,255,0.6) inset;
+      text-align: center;
+      opacity: 0;
+      transform: translateY(24px);
+      transition: opacity 0.6s ease, transform 0.6s ease;
+    }
+
+    .login-card.visible {
+      opacity: 1;
+      transform: translateY(0);
+    }
+
+    .heart-icon {
+      font-size: 3.2rem;
+      display: block;
+      margin-bottom: 12px;
+      animation: float 3s ease-in-out infinite;
+    }
+
+    .login-card h1 {
+      font-size: 1.9rem;
+      color: #3D4A5C;
+      margin-bottom: 6px;
+      font-weight: 600;
+    }
+
+    .login-card .subtitle {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.15rem;
+      color: #C39BD3;
+      margin-bottom: 34px;
+    }
+
+    .input-wrap {
+      position: relative;
+      margin-bottom: 10px;
+    }
+
+    .input-wrap .icon {
+      position: absolute;
+      left: 16px;
+      top: 50%;
+      transform: translateY(-50%);
+      font-size: 1.1rem;
+      color: #85C1E9;
+      pointer-events: none;
+    }
+
+    #password-input {
+      width: 100%;
+      padding: 14px 16px 14px 44px;
+      border: 2px solid #C8E6FA;
+      border-radius: 50px;
+      font-size: 1.05rem;
+      font-family: 'Lato', sans-serif;
+      color: #3D4A5C;
+      background: rgba(255,255,255,0.85);
+      outline: none;
+      transition: border-color 0.3s, box-shadow 0.3s;
+      text-align: center;
+      letter-spacing: 2px;
+    }
+
+    #password-input:focus {
+      border-color: #85C1E9;
+      box-shadow: 0 0 0 4px rgba(133,193,233,0.18);
+    }
+
+    #password-input.shake {
+      animation: shake 0.4s ease;
+    }
+
+    @keyframes shake {
+      0%, 100% { transform: translateX(0); }
+      20% { transform: translateX(-8px); }
+      40% { transform: translateX(8px); }
+      60% { transform: translateX(-5px); }
+      80% { transform: translateX(5px); }
+    }
+
+    .hint-text {
+      font-size: 0.8rem;
+      color: #B0BEC5;
+      margin-bottom: 26px;
+      font-style: italic;
+    }
+
+    #login-btn {
+      width: 100%;
+      padding: 14px;
+      border-radius: 50px;
+      font-size: 1rem;
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+      background: linear-gradient(135deg, #85C1E9, #A29BFE);
+      color: white;
+      border: none;
+      cursor: pointer;
+      font-family: 'Lato', sans-serif;
+      font-weight: 700;
+      letter-spacing: 0.5px;
+      box-shadow: 0 4px 18px rgba(133,193,233,0.4);
+      transition: all 0.3s cubic-bezier(0.34, 1.56, 0.64, 1);
+    }
+
+    #login-btn:hover:not(:disabled) {
+      transform: translateY(-2px) scale(1.02);
+      box-shadow: 0 8px 28px rgba(133,193,233,0.5);
+    }
+
+    #login-btn:disabled { opacity: 0.7; cursor: not-allowed; }
+
+    .btn-spinner {
+      width: 16px; height: 16px;
+      border: 2px solid rgba(255,255,255,0.4);
+      border-top-color: white;
+      border-radius: 50%;
+      display: inline-block;
+      animation: spin 0.7s linear infinite;
+    }
+
+    @keyframes spin { to { transform: rotate(360deg); } }
+
+    #error-msg {
+      display: none;
+      margin-top: 14px;
+      font-size: 0.85rem;
+      color: #E891A2;
+      background: rgba(247,202,208,0.3);
+      padding: 8px 14px;
+      border-radius: 12px;
+    }
+
+    #success-msg {
+      display: none;
+      margin-top: 14px;
+      font-size: 0.9rem;
+      color: #5DADE2;
+      background: rgba(200,230,250,0.3);
+      padding: 8px 14px;
+      border-radius: 12px;
+      font-family: 'Dancing Script', cursive;
+      font-size: 1.05rem;
+    }
+
+    .divider {
+      margin: 28px 0 18px;
+      height: 1px;
+      background: linear-gradient(90deg, transparent, #D7BDE2, transparent);
+    }
+
+    .footer-note {
+      font-family: 'Dancing Script', cursive;
+      font-size: 1rem;
+      color: #C39BD3;
+    }
+  </style>
+</head>
+<body>
+
+  <!-- Pétalos -->
+  <div class="petal-container"></div>
+
+  <!-- Audio oculto -->
+  <audio id="bg-audio" loop preload="auto">
+    <source src="{{ url_for('static', filename='assets/audio/musica.mp3') }}" type="audio/mpeg">
+  </audio>
+
+  <!-- Card de login -->
+  <div class="login-card" id="login-card">
+    <span class="heart-icon">💙</span>
+    <h1>Hola, amor</h1>
+    <p class="subtitle">Este espacio es solo tuyo</p>
+
+    <form id="login-form" autocomplete="off">
+      <div class="input-wrap">
+        <span class="icon">🗓️</span>
+        <input
+          type="text"
+          id="password-input"
+          placeholder="DD/MM/AAAA"
+          maxlength="10"
+          inputmode="numeric"
+          autocomplete="off"
+        >
+      </div>
+      <p class="hint-text">Ingresa nuestra fecha especial</p>
+      <button type="submit" class="btn" id="login-btn">
+        <span>Entrar</span> <span>✨</span>
+      </button>
+      <div id="error-msg"></div>
+      <div id="success-msg">¡Te estaba esperando! 💙</div>
+    </form>
+
+    <div class="divider"></div>
+    <p class="footer-note">Hecho con todo mi amor para ti 🌸</p>
+  </div>
+
+  <script src="{{ url_for('static', filename='js/auth.js') }}"></script>
+</body>
+</html>
