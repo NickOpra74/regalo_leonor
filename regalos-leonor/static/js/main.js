@@ -1,4 +1,4 @@
-/* ===== MAIN.JS - Modales, menú y almanaque ===== */
+/* ===== MAIN.JS - Modales, menú y almanaque ===== */ 
 
 document.addEventListener('DOMContentLoaded', () => {
 
