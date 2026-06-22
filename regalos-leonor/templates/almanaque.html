@@ -7,371 +7,252 @@
   <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
   <style>
 
-    /* ══════════════════════════════════
-       BASE
-    ══════════════════════════════════ */
     body {
       background: radial-gradient(ellipse at 30% 20%, #daeeff 0%, #eee6f7 45%, #fde8ed 100%);
       min-height: 100vh;
-      padding-bottom: 60px;
+      padding-bottom: 50px;
       overflow-x: hidden;
     }
 
-    /* ── HEADER ── */
+    /* HEADER */
     .alm-header {
       text-align: center;
-      padding: 36px 20px 20px;
+      padding: 32px 20px 16px;
       position: relative; z-index: 20;
     }
     .back-link {
       display: inline-flex; align-items: center; gap: 6px;
       color: #85C1E9; text-decoration: none;
-      font-size: 0.88rem; font-weight: 700; margin-bottom: 14px;
+      font-size: 0.88rem; font-weight: 700; margin-bottom: 10px;
       transition: color .2s;
     }
     .back-link:hover { color: #5DADE2; }
     .alm-header h1 {
-      font-size: 2rem; color: #3D4A5C;
-      font-style: italic; margin-bottom: 4px;
+      font-size: 1.8rem; color: #3D4A5C;
+      font-style: italic; margin-bottom: 2px;
     }
     .alm-header .sub {
       font-family: 'Dancing Script', cursive;
-      font-size: 1.05rem; color: #C39BD3;
+      font-size: 1rem; color: #C39BD3;
     }
 
-    /* ══════════════════════════════════
-       LIBRO 3D
-    ══════════════════════════════════ */
+    /* LIBRO 3D */
     .book-scene {
-      perspective: 1800px;
-      max-width: 640px;
+      perspective: 2000px;
+      max-width: 600px;
       margin: 0 auto;
       padding: 0 16px;
       position: relative; z-index: 10;
     }
 
-    /* Libro cerrado (contenedor) */
     .book {
       position: relative;
       width: 100%;
-      /* Relación tipo libro: ~4:5.5 */
-      aspect-ratio: 4 / 5.5;
+      aspect-ratio: 3 / 4;
       transform-style: preserve-3d;
     }
 
-    /* Tapa posterior (fondo del libro) */
     .book-back-cover {
       position: absolute; inset: 0;
-      background: linear-gradient(160deg, #b8d9f0 0%, #c9b8e8 100%);
+      background: linear-gradient(160deg, #b8d9f0, #c9b8e8);
       border-radius: 4px 18px 18px 4px;
-      box-shadow:
-        4px 6px 20px rgba(90,120,160,.35),
-        inset -3px 0 8px rgba(0,0,0,.08);
+      box-shadow: 4px 6px 24px rgba(90,120,160,.35), inset -3px 0 8px rgba(0,0,0,.08);
     }
-
-    /* Lomo del libro */
     .book-spine {
       position: absolute;
-      top: 2%; left: -22px;
-      width: 22px;
-      height: 96%;
-      background: linear-gradient(180deg, #a8cce0 0%, #b8a8d8 100%);
+      top: 2%; left: -20px;
+      width: 20px; height: 96%;
+      background: linear-gradient(180deg, #a8cce0, #b8a8d8);
       border-radius: 6px 0 0 6px;
       box-shadow: -3px 0 10px rgba(0,0,0,.18);
       display: flex; align-items: center; justify-content: center;
     }
     .spine-text {
-      writing-mode: vertical-rl;
-      text-orientation: mixed;
+      writing-mode: vertical-rl; text-orientation: mixed;
       transform: rotate(180deg);
       font-family: 'Dancing Script', cursive;
-      font-size: 0.72rem;
-      color: rgba(255,255,255,.85);
-      letter-spacing: 2px;
-      white-space: nowrap;
+      font-size: 0.65rem; color: rgba(255,255,255,.88);
+      letter-spacing: 2px; white-space: nowrap;
     }
-
-    /* Stack de páginas en el canto derecho */
     .book-pages-stack {
-      position: absolute;
-      top: 1%; right: -6px;
-      width: 8px; height: 98%;
+      position: absolute; top: 1%; right: -5px;
+      width: 7px; height: 98%;
       background: repeating-linear-gradient(
-        to bottom,
-        #f5f0e8 0px, #f5f0e8 2px,
-        #e8e0d0 2px, #e8e0d0 3px
+        to bottom, #f5f0e8 0px, #f5f0e8 2px, #e8e0d0 2px, #e8e0d0 3px
       );
       border-radius: 0 3px 3px 0;
       box-shadow: 2px 0 6px rgba(0,0,0,.12);
     }
 
-    /* ── FLIP CONTAINER ── */
+    /* FLIP */
     .flip-container {
       position: absolute; inset: 0;
       transform-style: preserve-3d;
     }
-
-    /* Cara de la página (frente y dorso) */
     .page-face {
       position: absolute; inset: 0;
       backface-visibility: hidden;
       -webkit-backface-visibility: hidden;
       border-radius: 4px 16px 16px 4px;
       overflow: hidden;
-    }
-
-    .page-face.front {
       background: #fffdf8;
-      transform: rotateY(0deg);
     }
+    .page-face.back { transform: rotateY(180deg); }
 
-    .page-face.back {
-      background: #fffdf8;
-      transform: rotateY(180deg);
+    .flip-container.flip-fwd {
+      animation: flipFwd .65s cubic-bezier(.4,0,.2,1) forwards;
     }
-
-    /* Sombra de doblez al pasar */
-    .page-face.front::after {
-      content: '';
-      position: absolute; top: 0; right: 0;
-      width: 0; height: 100%;
-      background: linear-gradient(to left, rgba(0,0,0,.18) 0%, transparent 100%);
-      transition: width .0s;
-      pointer-events: none;
+    .flip-container.flip-bck {
+      animation: flipBck .65s cubic-bezier(.4,0,.2,1) forwards;
     }
-
-    /* ── ANIMACIONES FLIP ── */
-    .flip-container.flipping-forward {
-      animation: flipForward .7s cubic-bezier(.4,0,.2,1) forwards;
-    }
-    .flip-container.flipping-back {
-      animation: flipBack .7s cubic-bezier(.4,0,.2,1) forwards;
-    }
-
-    @keyframes flipForward {
-      0%   { transform: rotateY(0deg);    }
-      40%  { transform: rotateY(-60deg);  box-shadow: -12px 0 28px rgba(0,0,0,.22); }
+    @keyframes flipFwd {
+      0%   { transform: rotateY(0deg); }
+      45%  { transform: rotateY(-70deg); filter: drop-shadow(-8px 0 14px rgba(0,0,0,.2)); }
       100% { transform: rotateY(-180deg); }
     }
-    @keyframes flipBack {
+    @keyframes flipBck {
       0%   { transform: rotateY(-180deg); }
-      40%  { transform: rotateY(-120deg); box-shadow: -8px 0 20px rgba(0,0,0,.15); }
-      100% { transform: rotateY(0deg);    }
+      45%  { transform: rotateY(-110deg); filter: drop-shadow(-6px 0 10px rgba(0,0,0,.15)); }
+      100% { transform: rotateY(0deg); }
     }
 
-    /* ══════════════════════════════════
-       CONTENIDO INTERNO DE CADA PÁGINA
-    ══════════════════════════════════ */
+    /* INTERIOR DE PÁGINA */
+    .page-inner {
+      display: flex; flex-direction: column;
+      height: 100%; width: 100%;
+    }
 
-    /* Encabezado de página */
-    .pg-header {
+    .pg-head {
       display: flex; align-items: center; justify-content: space-between;
-      padding: 10px 14px 6px;
+      padding: 8px 14px 6px;
       border-bottom: 1px solid #f0e8d8;
+      flex-shrink: 0;
     }
     .pg-month {
       font-family: 'Playfair Display', serif;
-      font-size: 1.0rem; font-style: italic;
-      color: #3D4A5C;
+      font-size: 0.92rem; font-style: italic; color: #3D4A5C;
     }
-    .pg-num {
-      font-size: 0.7rem; color: #B0BEC5;
-      font-family: 'Lato', sans-serif;
-    }
+    .pg-num { font-size: 0.65rem; color: #C0C9D4; }
 
-    /* Grid de fotos */
-    .pg-grid {
+    /* GRID DE FOTOS — ocupa todo el espacio disponible */
+    .photos-grid {
+      flex: 1;
       padding: 8px 10px;
       display: grid;
-      gap: 6px;
+      gap: 7px;
+      min-height: 0;
+    }
+
+    /* Layouts por cantidad de fotos */
+    .photos-grid.n1 { grid-template-columns: 1fr; }
+    .photos-grid.n2 { grid-template-columns: 1fr 1fr; }
+    .photos-grid.n3 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+    .photos-grid.n3 .photo-cell:first-child { grid-column: 1 / -1; }
+    .photos-grid.n4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
+
+    /* Celda: imagen + fecha */
+    .photo-cell {
+      display: flex; flex-direction: column; align-items: center;
+      gap: 3px; min-height: 0;
+    }
+
+    .photo-cell .img-wrap {
       flex: 1;
-    }
-
-    /* Layouts según cantidad */
-    .pg-grid.layout-1 { grid-template-columns: 1fr; }
-    .pg-grid.layout-2 { grid-template-columns: 1fr 1fr; }
-    .pg-grid.layout-3 { grid-template-columns: 1fr 1fr; grid-template-rows: auto auto; }
-    .pg-grid.layout-4 { grid-template-columns: 1fr 1fr; grid-template-rows: 1fr 1fr; }
-
-    .layout-3 .photo-slot:first-child {
-      grid-column: 1 / -1;
-    }
-
-    /* Slot de foto individual */
-    .photo-slot {
-      position: relative;
-      overflow: hidden;
+      width: 100%;
       border-radius: 8px;
-      background: #f5f0e8;
-      box-shadow: 0 2px 8px rgba(0,0,0,.10), inset 0 0 0 1px rgba(255,255,255,.6);
+      overflow: hidden;
+      box-shadow: 0 2px 8px rgba(0,0,0,.12), inset 0 0 0 1px rgba(255,255,255,.5);
+      background: #ede5d8;
+      min-height: 0;
+      position: relative;
     }
-
-    /* Efecto polaroid */
-    .photo-slot::before {
+    /* Brillo sutil estilo foto impresa */
+    .photo-cell .img-wrap::after {
       content: '';
       position: absolute; inset: 0;
-      background: linear-gradient(135deg, rgba(255,255,255,.18) 0%, transparent 60%);
-      z-index: 1; pointer-events: none;
+      background: linear-gradient(135deg, rgba(255,255,255,.15) 0%, transparent 55%);
+      pointer-events: none;
     }
 
-    .photo-slot img {
+    .photo-cell .img-wrap img {
       width: 100%; height: 100%;
-      object-fit: cover;
-      display: block;
-      transition: transform .4s ease;
+      object-fit: cover; display: block;
     }
-    .photo-slot:hover img { transform: scale(1.04); }
 
-    /* Pequeña etiqueta de fecha en foto */
-    .photo-date-tag {
-      position: absolute; bottom: 5px; right: 6px;
-      font-size: 0.6rem;
+    .photo-cell .photo-date {
+      font-size: 0.58rem;
+      color: #9BAAB8;
       font-family: 'Dancing Script', cursive;
-      color: rgba(255,255,255,.92);
-      background: rgba(0,0,0,.28);
-      padding: 1px 6px; border-radius: 8px;
-      backdrop-filter: blur(4px);
-      z-index: 2;
+      text-align: center;
+      white-space: nowrap;
+      line-height: 1;
+      flex-shrink: 0;
     }
 
-    /* Pie de página */
-    .pg-footer {
-      padding: 5px 14px 8px;
+    .pg-foot {
+      padding: 4px 14px 7px;
       display: flex; align-items: center; justify-content: space-between;
-      border-top: 1px solid #f0e8d8;
+      border-top: 1px solid #f0e8d8; flex-shrink: 0;
     }
-    .pg-hearts { font-size: .75rem; color: #F2A7B3; letter-spacing: 2px; }
+    .pg-hearts { font-size: .68rem; color: #F2A7B3; letter-spacing: 2px; }
     .pg-label {
       font-family: 'Dancing Script', cursive;
-      font-size: .75rem; color: #C39BD3;
+      font-size: .7rem; color: #C39BD3;
     }
 
-    /* ── PÁGINA "CONTINUARÁ" ── */
-    .page-continuara {
-      display: flex;
-      flex-direction: column;
-      align-items: center;
-      justify-content: center;
-      height: 100%;
-      text-align: center;
-      padding: 32px 24px;
-      background: linear-gradient(160deg, #fffdf8, #fef0f7);
-    }
-    .cont-icon { font-size: 3.5rem; margin-bottom: 18px; animation: float 3s ease-in-out infinite; }
-    .cont-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.6rem; font-style: italic;
-      color: #3D4A5C; margin-bottom: 12px;
-    }
-    .cont-text {
-      font-family: 'Dancing Script', cursive;
-      font-size: 1.05rem; color: #C39BD3;
-      line-height: 1.7;
-      max-width: 280px;
-    }
-    .cont-dots {
-      display: flex; gap: 10px; margin-top: 24px;
-    }
-    .cont-dots span {
-      width: 10px; height: 10px; border-radius: 50%;
-      animation: pulse-soft 1.6s ease-in-out infinite;
-    }
-    .cont-dots span:nth-child(1) { background: #85C1E9; animation-delay: 0s; }
-    .cont-dots span:nth-child(2) { background: #F2A7B3; animation-delay: .3s; }
-    .cont-dots span:nth-child(3) { background: #C39BD3; animation-delay: .6s; }
-
-    /* ── TAPA DELANTERA especial ── */
+    /* PORTADA */
     .cover-content {
       display: flex; flex-direction: column;
       align-items: center; justify-content: center;
-      height: 100%; text-align: center;
-      padding: 28px 20px;
-      background: linear-gradient(160deg, #daeeff 0%, #f0e6f8 60%, #fde8ed 100%);
+      height: 100%; text-align: center; padding: 28px 20px;
+      background: linear-gradient(160deg, #daeeff, #f0e6f8 60%, #fde8ed);
     }
     .cover-icon { font-size: 3rem; margin-bottom: 14px; animation: float 3.5s ease-in-out infinite; }
-    .cover-title {
-      font-family: 'Playfair Display', serif;
-      font-size: 1.8rem; font-style: italic;
-      color: #3D4A5C; margin-bottom: 8px;
-    }
-    .cover-sub {
-      font-family: 'Dancing Script', cursive;
-      font-size: 1.1rem; color: #7EB5D4; margin-bottom: 20px;
-    }
-    .cover-line {
-      width: 60px; height: 2px;
-      background: linear-gradient(90deg, #85C1E9, #C39BD3);
-      border-radius: 2px; margin: 0 auto 18px;
-    }
-    .cover-note {
-      font-size: 0.82rem; color: #9BAAB8; font-style: italic;
-    }
-    .open-hint {
-      margin-top: 22px;
-      display: flex; align-items: center; gap: 7px;
-      font-size: 0.8rem; color: #A8C8E0;
-      animation: pulse-soft 2s ease-in-out infinite;
-    }
+    .cover-title { font-family: 'Playfair Display', serif; font-size: 1.7rem; font-style: italic; color: #3D4A5C; margin-bottom: 7px; }
+    .cover-sub { font-family: 'Dancing Script', cursive; font-size: 1.05rem; color: #7EB5D4; margin-bottom: 18px; }
+    .cover-line { width: 55px; height: 2px; background: linear-gradient(90deg, #85C1E9, #C39BD3); border-radius: 2px; margin: 0 auto 16px; }
+    .cover-note { font-size: 0.8rem; color: #9BAAB8; font-style: italic; }
+    .open-hint { margin-top: 20px; display: flex; align-items: center; gap: 6px; font-size: 0.78rem; color: #A8C8E0; animation: pulse-soft 2s ease-in-out infinite; }
 
-    /* ══════════════════════════════════
-       CONTROLES
-    ══════════════════════════════════ */
+    /* CONTINUARÁ */
+    .page-continuara {
+      display: flex; flex-direction: column;
+      align-items: center; justify-content: center;
+      height: 100%; text-align: center; padding: 32px 24px;
+      background: linear-gradient(160deg, #fffdf8, #fef0f7);
+    }
+    .cont-icon { font-size: 3rem; margin-bottom: 16px; animation: float 3s ease-in-out infinite; }
+    .cont-title { font-family: 'Playfair Display', serif; font-size: 1.5rem; font-style: italic; color: #3D4A5C; margin-bottom: 10px; }
+    .cont-text { font-family: 'Dancing Script', cursive; font-size: 1rem; color: #C39BD3; line-height: 1.7; max-width: 260px; }
+    .cont-dots { display: flex; gap: 9px; margin-top: 22px; }
+    .cont-dots span { width: 9px; height: 9px; border-radius: 50%; animation: pulse-soft 1.6s ease-in-out infinite; }
+    .cont-dots span:nth-child(1) { background: #85C1E9; }
+    .cont-dots span:nth-child(2) { background: #F2A7B3; animation-delay: .3s; }
+    .cont-dots span:nth-child(3) { background: #C39BD3; animation-delay: .6s; }
+
+    /* CONTROLES */
     .album-controls {
       display: flex; align-items: center;
-      justify-content: center; gap: 22px;
-      margin-top: 22px; position: relative; z-index: 20;
+      justify-content: center; gap: 20px;
+      margin-top: 18px; position: relative; z-index: 20;
     }
     .nav-btn {
-      width: 52px; height: 52px; border-radius: 50%;
-      border: none; cursor: pointer;
-      font-size: 1.4rem;
+      width: 50px; height: 50px; border-radius: 50%;
+      border: none; cursor: pointer; font-size: 1.3rem;
       display: flex; align-items: center; justify-content: center;
       background: rgba(255,255,255,.85);
-      box-shadow: 0 4px 18px rgba(133,193,233,.28);
+      box-shadow: 0 4px 16px rgba(133,193,233,.28);
       color: #5DADE2; backdrop-filter: blur(8px);
       transition: all .3s cubic-bezier(.34,1.56,.64,1);
     }
-    .nav-btn:hover:not(:disabled) {
-      transform: scale(1.13);
-      background: linear-gradient(135deg, #C8E6FA, #D7BDE2);
-      color: #3D4A5C;
-    }
+    .nav-btn:hover:not(:disabled) { transform: scale(1.12); background: linear-gradient(135deg,#C8E6FA,#D7BDE2); color: #3D4A5C; }
     .nav-btn:disabled { opacity: .3; cursor: not-allowed; transform: none; }
+    #page-counter { font-family: 'Dancing Script', cursive; font-size: 1.05rem; color: #85C1E9; min-width: 68px; text-align: center; }
 
-    #page-counter {
-      font-family: 'Dancing Script', cursive;
-      font-size: 1.1rem; color: #85C1E9;
-      min-width: 70px; text-align: center;
-    }
-
-    /* Dots */
-    .dots-progress {
-      display: flex; justify-content: center;
-      gap: 7px; margin-top: 16px;
-      position: relative; z-index: 20;
-      flex-wrap: wrap;
-    }
-    .dot-item {
-      width: 7px; height: 7px; border-radius: 50%;
-      background: #D7BDE2; cursor: pointer;
-      transition: all .3s ease;
-    }
-    .dot-item.active {
-      background: #85C1E9; width: 20px; border-radius: 4px;
-    }
-
-    .swipe-hint {
-      text-align: center; font-size: .75rem;
-      color: #C0C9D4; margin-top: 12px;
-      font-style: italic; position: relative; z-index: 20;
-    }
-
-    /* ── ALTURA FORZADA para la cara interna ── */
-    .page-face-inner {
-      display: flex; flex-direction: column;
-      height: 100%;
-    }
-    .pg-grid { flex: 1; }
+    .dots-progress { display: flex; justify-content: center; gap: 7px; margin-top: 14px; position: relative; z-index: 20; flex-wrap: wrap; }
+    .dot-item { width: 7px; height: 7px; border-radius: 50%; background: #D7BDE2; cursor: pointer; transition: all .3s ease; }
+    .dot-item.active { background: #85C1E9; width: 20px; border-radius: 4px; }
+    .swipe-hint { text-align: center; font-size: .73rem; color: #C0C9D4; margin-top: 10px; font-style: italic; position: relative; z-index: 20; }
   </style>
 </head>
 <body>
@@ -386,253 +267,193 @@
     <span class="audio-label">Nuestra canción</span>
   </div>
 
-  <!-- HEADER -->
   <header class="alm-header">
     <a href="{{ url_for('menu') }}" class="back-link">← Volver</a>
     <h1>Nuestro álbum 📖</h1>
     <p class="sub">Cada página, un momento nuestro</p>
   </header>
 
-  <!-- LIBRO -->
   <div class="book-scene">
     <div class="book" id="book">
-
-      <!-- Lomo -->
       <div class="book-spine"><span class="spine-text">Nuestros recuerdos 💙</span></div>
-      <!-- Canto de páginas -->
       <div class="book-pages-stack"></div>
-      <!-- Tapa trasera -->
       <div class="book-back-cover"></div>
-
-      <!-- FLIP CONTAINER (una sola hoja que animamos) -->
       <div class="flip-container" id="flipper">
-
-        <!-- FRENTE: página actual -->
         <div class="page-face front" id="face-front"></div>
-
-        <!-- DORSO: página siguiente/anterior (oculta hasta el flip) -->
-        <div class="page-face back" id="face-back"></div>
-
+        <div class="page-face back"  id="face-back"></div>
       </div>
     </div>
   </div>
 
-  <!-- CONTROLES -->
   <div class="album-controls">
-    <button class="nav-btn" id="prev-btn" title="Página anterior">&#9664;</button>
+    <button class="nav-btn" id="prev-btn">&#9664;</button>
     <span id="page-counter">Portada</span>
-    <button class="nav-btn" id="next-btn" title="Página siguiente">&#9654;</button>
+    <button class="nav-btn" id="next-btn">&#9654;</button>
   </div>
-
   <div class="dots-progress" id="dots-progress"></div>
-  <p class="swipe-hint">Desliza o usa ← → para pasar páginas</p>
+  <p class="swipe-hint">Desliza o usa ← →</p>
 
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
   <script>
-  (function() {
+  (function () {
 
-    /* ══════════════════════
-       DATOS DE PÁGINAS
-       Agrega más objetos a este array para nuevas fotos.
-       photos: array de { src, date } por página (máx 4 por página)
-    ══════════════════════ */
+    /* ══════════════════════════════════════════
+       PÁGINAS — orden exacto que indicaste
+       Puedes agregar más fotos o páginas aquí.
+       Máx recomendado: 4 fotos por página.
+    ══════════════════════════════════════════ */
     const PAGES = [
-      // Portada especial (sin fotos)
       { type: 'cover' },
 
-      // Diciembre 2025
       {
         month: 'Diciembre 2025',
         photos: [
-          { src: "{{ url_for('static', filename='assets/images/foto6.jpeg') }}", date: 'Dic 2025' }
+          { src: "{{ url_for('static', filename='assets/images/foto6.jpeg') }}", date: 'Diciembre 2025' }
         ]
       },
-
-      // Enero 2026
       {
         month: 'Enero 2026',
         photos: [
-          { src: "{{ url_for('static', filename='assets/images/foto8.jpeg') }}", date: 'Ene 2026' },
-          { src: "{{ url_for('static', filename='assets/images/foto5.jpeg') }}", date: 'Ene 2026' }
+          { src: "{{ url_for('static', filename='assets/images/foto8.jpeg') }}", date: 'Enero 2026' },
+          { src: "{{ url_for('static', filename='assets/images/foto5.jpeg') }}", date: 'Enero 2026' }
         ]
       },
-
-      // Febrero 2026
       {
         month: 'Febrero 2026',
         photos: [
-          { src: "{{ url_for('static', filename='assets/images/foto7.jpeg') }}", date: 'Feb 2026' },
-          { src: "{{ url_for('static', filename='assets/images/foto2.jpeg') }}", date: 'Feb 2026' }
+          { src: "{{ url_for('static', filename='assets/images/foto7.jpeg') }}", date: 'Febrero 2026' },
+          { src: "{{ url_for('static', filename='assets/images/foto2.jpeg') }}", date: 'Febrero 2026' }
         ]
       },
-
-      // Marzo 2026
       {
         month: 'Marzo 2026',
         photos: [
-          { src: "{{ url_for('static', filename='assets/images/foto4.jpeg') }}", date: 'Mar 2026' },
-          { src: "{{ url_for('static', filename='assets/images/foto1.jpeg') }}", date: 'Mar 2026' },
-          { src: "{{ url_for('static', filename='assets/images/foto3.jpeg') }}", date: 'Mar 2026' }
+          { src: "{{ url_for('static', filename='assets/images/foto4.jpeg') }}", date: 'Marzo 2026' },
+          { src: "{{ url_for('static', filename='assets/images/foto1.jpeg') }}", date: 'Marzo 2026' },
+          { src: "{{ url_for('static', filename='assets/images/foto3.jpeg') }}", date: 'Marzo 2026' }
         ]
       },
 
-      // Página final "Continuará..."
       { type: 'continuara' }
     ];
 
-    /* ══════════════════════
-       CONSTRUCCIÓN DE PÁGINAS HTML
-    ══════════════════════ */
-    function buildPageHTML(page, pageNum) {
+    /* ════════════════════════
+       CONSTRUIR HTML
+    ════════════════════════ */
+    function buildPage(page, idx) {
       if (page.type === 'cover') {
-        return `
-          <div class="cover-content">
-            <span class="cover-icon">📖</span>
-            <div class="cover-title">Nuestro álbum</div>
-            <div class="cover-sub">01 / 12 / 2025 →</div>
-            <div class="cover-line"></div>
-            <p class="cover-note">Un recuerdo por cada mes juntos</p>
-            <div class="open-hint">
-              <span>Pasa la página</span> <span>▶</span>
-            </div>
-          </div>`;
+        return `<div class="cover-content">
+          <span class="cover-icon">📖</span>
+          <div class="cover-title">Nuestro álbum</div>
+          <div class="cover-sub">01 · 12 · 2025</div>
+          <div class="cover-line"></div>
+          <p class="cover-note">Un recuerdo por cada mes juntos</p>
+          <div class="open-hint"><span>Abre el libro</span><span>▶</span></div>
+        </div>`;
       }
-
       if (page.type === 'continuara') {
-        return `
-          <div class="page-continuara">
-            <span class="cont-icon">🌙</span>
-            <div class="cont-title">Continuará…</div>
-            <p class="cont-text">Esta historia apenas comienza.<br>Cada nuevo mes traerá más páginas,<br>más recuerdos, más nosotros.</p>
-            <div class="cont-dots">
-              <span></span><span></span><span></span>
-            </div>
-          </div>`;
+        return `<div class="page-continuara">
+          <span class="cont-icon">🌙</span>
+          <div class="cont-title">Continuará…</div>
+          <p class="cont-text">Esta historia apenas comienza.<br>Cada nuevo mes traerá más páginas,<br>más recuerdos, más nosotros.</p>
+          <div class="cont-dots"><span></span><span></span><span></span></div>
+        </div>`;
       }
 
-      const count = page.photos.length;
-      const layout = count <= 4 ? count : 4;
-      const photosHTML = page.photos.slice(0, 4).map(p => `
-        <div class="photo-slot">
-          <img src="${p.src}" alt="${page.month}" loading="lazy">
-          <span class="photo-date-tag">${p.date}</span>
+      const n = Math.min(page.photos.length, 4);
+      const label = (idx > 0 && idx < PAGES.length - 1) ? `Pág. ${idx}` : '';
+
+      const cellsHTML = page.photos.slice(0, 4).map(p => `
+        <div class="photo-cell">
+          <div class="img-wrap">
+            <img src="${p.src}" alt="${p.date}" loading="lazy">
+          </div>
+          <span class="photo-date">${p.date}</span>
         </div>`).join('');
 
-      const pageLabel = pageNum > 0 && pageNum < PAGES.length - 1
-        ? `Pág. ${pageNum}`
-        : '';
-
       return `
-        <div class="page-face-inner">
-          <div class="pg-header">
+        <div class="page-inner">
+          <div class="pg-head">
             <span class="pg-month">${page.month}</span>
-            <span class="pg-num">${pageLabel}</span>
+            <span class="pg-num">${label}</span>
           </div>
-          <div class="pg-grid layout-${layout}">${photosHTML}</div>
-          <div class="pg-footer">
+          <div class="photos-grid n${n}">${cellsHTML}</div>
+          <div class="pg-foot">
             <span class="pg-hearts">♡ ♡ ♡</span>
             <span class="pg-label">Nuestros recuerdos 💙</span>
           </div>
         </div>`;
     }
 
-    /* ══════════════════════
-       ESTADO Y NAVEGACIÓN
-    ══════════════════════ */
-    const flipper  = document.getElementById('flipper');
-    const front    = document.getElementById('face-front');
-    const back     = document.getElementById('face-back');
-    const prevBtn  = document.getElementById('prev-btn');
-    const nextBtn  = document.getElementById('next-btn');
-    const counter  = document.getElementById('page-counter');
-    const dotsWrap = document.getElementById('dots-progress');
+    /* ════════════════════════
+       NAVEGACIÓN
+    ════════════════════════ */
+    const flipper = document.getElementById('flipper');
+    const front   = document.getElementById('face-front');
+    const back    = document.getElementById('face-back');
+    const prevBtn = document.getElementById('prev-btn');
+    const nextBtn = document.getElementById('next-btn');
+    const counter = document.getElementById('page-counter');
+    const dotsEl  = document.getElementById('dots-progress');
 
-    let current = 0;
+    let current  = 0;
     let animating = false;
 
-    // Crear dots
     PAGES.forEach((_, i) => {
       const d = document.createElement('div');
       d.className = 'dot-item' + (i === 0 ? ' active' : '');
-      d.dataset.page = i;
       d.addEventListener('click', () => goTo(i));
-      dotsWrap.appendChild(d);
+      dotsEl.appendChild(d);
     });
 
-    function updateDots(idx) {
-      document.querySelectorAll('.dot-item').forEach((d, i) =>
-        d.classList.toggle('active', i === idx));
-    }
-
-    function updateCounter(idx) {
-      if (idx === 0) counter.textContent = 'Portada';
-      else if (idx === PAGES.length - 1) counter.textContent = '✦';
-      else counter.textContent = `${idx} / ${PAGES.length - 2}`;
-    }
-
-    function updateNav() {
+    function syncUI() {
+      dotsEl.querySelectorAll('.dot-item').forEach((d, i) =>
+        d.classList.toggle('active', i === current));
+      if (current === 0)                    counter.textContent = 'Portada';
+      else if (current === PAGES.length-1)  counter.textContent = '✦';
+      else                                  counter.textContent = `${current} / ${PAGES.length-2}`;
       prevBtn.disabled = current === 0;
       nextBtn.disabled = current === PAGES.length - 1;
     }
 
-    // Renderizar página inicial
-    front.innerHTML = buildPageHTML(PAGES[0], 0);
-    updateCounter(0);
-    updateNav();
+    function renderFront(i) {
+      front.innerHTML = buildPage(PAGES[i], i);
+    }
 
     function goTo(target) {
       if (animating || target === current) return;
       if (target < 0 || target >= PAGES.length) return;
       animating = true;
-
-      const forward = target > current;
-
-      if (forward) {
-        // Preparar dorso con destino
-        back.innerHTML = buildPageHTML(PAGES[target], target);
-        back.style.transform = 'rotateY(180deg)';
-        flipper.classList.remove('flipping-back');
-        void flipper.offsetWidth;
-        flipper.classList.add('flipping-forward');
-      } else {
-        // Volver: dorso tiene el anterior (que ahora mostramos)
-        back.innerHTML = buildPageHTML(PAGES[target], target);
-        back.style.transform = 'rotateY(180deg)';
-        flipper.classList.remove('flipping-forward');
-        void flipper.offsetWidth;
-        flipper.classList.add('flipping-back');
-      }
-
+      const fwd = target > current;
+      back.innerHTML = buildPage(PAGES[target], target);
+      flipper.classList.remove('flip-fwd','flip-bck');
+      void flipper.offsetWidth;
+      flipper.classList.add(fwd ? 'flip-fwd' : 'flip-bck');
       current = target;
-      updateDots(current);
-      updateCounter(current);
-      updateNav();
-
-      // Al terminar la animación, resetear
+      syncUI();
       setTimeout(() => {
-        // Actualizar frente con la nueva página
-        front.innerHTML = buildPageHTML(PAGES[current], current);
-        flipper.classList.remove('flipping-forward', 'flipping-back');
+        renderFront(current);
+        flipper.classList.remove('flip-fwd','flip-bck');
         flipper.style.transform = '';
         animating = false;
-      }, 700);
+      }, 660);
     }
+
+    renderFront(0); syncUI();
 
     prevBtn.addEventListener('click', () => goTo(current - 1));
     nextBtn.addEventListener('click', () => goTo(current + 1));
-
     document.addEventListener('keydown', e => {
       if (e.key === 'ArrowRight') goTo(current + 1);
       if (e.key === 'ArrowLeft')  goTo(current - 1);
     });
 
-    // Swipe táctil
     let sx = 0;
     const bookEl = document.getElementById('book');
-    bookEl.addEventListener('touchstart', e => { sx = e.touches[0].clientX; });
+    bookEl.addEventListener('touchstart', e => { sx = e.touches[0].clientX; }, { passive: true });
     bookEl.addEventListener('touchend', e => {
       const diff = sx - e.changedTouches[0].clientX;
-      if (Math.abs(diff) > 44) diff > 0 ? goTo(current + 1) : goTo(current - 1);
+      if (Math.abs(diff) > 44) diff > 0 ? goTo(current+1) : goTo(current-1);
     });
 
   })();
