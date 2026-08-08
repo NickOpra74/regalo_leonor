@@ -72,6 +72,7 @@
       transform: translateY(20px);
       text-decoration: none;
       display: block;
+      position: relative;
     }
 
     .menu-card.fade-in-up {
@@ -118,14 +119,63 @@
       text-transform: uppercase;
     }
 
-    .tag-azul  { background: #C8E6FA; color: #2E86C1; }
-    .tag-rosa  { background: #F7CAD0; color: #C0392B; }
-    .tag-morado { background: #D7BDE2; color: #6C3483; }
+    .tag-azul    { background: #C8E6FA; color: #2E86C1; }
+    .tag-rosa    { background: #F7CAD0; color: #C0392B; }
+    .tag-morado  { background: #D7BDE2; color: #6C3483; }
+    .tag-verde   { background: #CDF0DC; color: #1E8449; }
+    .tag-durazno { background: #FFE0C7; color: #CA6F1E; }
+
+    /* ── BOTONES ✏️ 🗑️ EN CADA CARTA ── */
+    .card-acciones {
+      position: absolute;
+      top: 12px;
+      right: 12px;
+      display: flex;
+      gap: 6px;
+      opacity: 0;
+      transition: opacity 0.25s ease;
+    }
+
+    .menu-card:hover .card-acciones,
+    .menu-card:focus-within .card-acciones { opacity: 1; }
+
+    @media (hover: none) {
+      .card-acciones { opacity: 1; }
+    }
+
+    .mini-btn {
+      width: 30px; height: 30px;
+      border-radius: 50%;
+      border: 1px solid rgba(200,230,250,0.9);
+      background: rgba(255,255,255,0.92);
+      cursor: pointer;
+      font-size: 0.82rem;
+      line-height: 1;
+      display: flex; align-items: center; justify-content: center;
+      transition: transform 0.2s, background 0.2s;
+      padding: 0;
+    }
+
+    .mini-btn:hover { transform: scale(1.15); background: #EBF5FB; }
+    .mini-btn-rojo:hover { background: #FDEDEC; }
+
+    /* ── CARD "AÑADIR" ── */
+    .card-add {
+      border: 2px dashed #D7BDE2;
+      background: rgba(255,255,255,0.45);
+      font-family: inherit;
+      width: 100%;
+    }
+
+    .card-add:hover {
+      background: rgba(255,255,255,0.75);
+      border-color: #C39BD3;
+    }
+
+    .card-add .card-icon { animation: pulse-soft 2.6s ease-in-out infinite; }
 
     /* ── MODALES DE CARTAS ── */
-    .carta-content {
-      text-align: center;
-    }
+    .carta-content { text-align: center; }
 
     .carta-icon {
       font-size: 2.5rem;
@@ -151,6 +201,8 @@
       border-radius: 0 12px 12px 0;
       padding: 16px 18px;
       margin-bottom: 20px;
+      max-height: 55vh;
+      overflow-y: auto;
     }
 
     .carta-firma {
@@ -159,6 +211,157 @@
       color: #C39BD3;
       text-align: right;
     }
+
+    /* ── FORMULARIO ── */
+    .modal-box.modal-form {
+      max-width: 540px;
+      max-height: 88vh;
+      overflow-y: auto;
+    }
+
+    .form-titulo {
+      font-size: 1.35rem;
+      color: #3D4A5C;
+      text-align: center;
+      margin-bottom: 22px;
+    }
+
+    .campo { margin-bottom: 16px; }
+
+    .campo label {
+      display: block;
+      font-size: 0.8rem;
+      font-weight: 700;
+      letter-spacing: 0.4px;
+      text-transform: uppercase;
+      color: #6B7A8D;
+      margin-bottom: 6px;
+    }
+
+    .campo input[type="text"],
+    .campo textarea,
+    .campo select {
+      width: 100%;
+      font-family: 'Lato', sans-serif;
+      font-size: 0.95rem;
+      color: #3D4A5C;
+      background: #FAFCFF;
+      border: 1px solid #D6E6F2;
+      border-radius: 12px;
+      padding: 11px 14px;
+      transition: border-color 0.25s, box-shadow 0.25s;
+    }
+
+    .campo textarea { min-height: 130px; resize: vertical; line-height: 1.65; }
+
+    .campo input:focus, .campo textarea:focus, .campo select:focus {
+      outline: none;
+      border-color: var(--azul-medio);
+      box-shadow: 0 0 0 3px rgba(133,193,233,0.18);
+    }
+
+    .campo .ayuda { font-size: 0.72rem; color: #9AA8B8; margin-top: 5px; text-transform: none; letter-spacing: 0; font-weight: 400; }
+
+    /* Selector de emoji */
+    .emoji-zona {
+      display: flex;
+      align-items: center;
+      gap: 12px;
+      margin-bottom: 10px;
+    }
+
+    .emoji-preview {
+      width: 58px; height: 58px;
+      flex-shrink: 0;
+      border-radius: 16px;
+      background: linear-gradient(135deg, #EBF5FB, #FEF0F2);
+      border: 1px solid #D6E6F2;
+      display: flex; align-items: center; justify-content: center;
+      font-size: 1.9rem;
+    }
+
+    .emoji-grid {
+      display: grid;
+      grid-template-columns: repeat(auto-fill, minmax(38px, 1fr));
+      gap: 5px;
+      max-height: 132px;
+      overflow-y: auto;
+      padding: 8px;
+      background: #FAFCFF;
+      border: 1px solid #D6E6F2;
+      border-radius: 12px;
+    }
+
+    .emoji-opt {
+      aspect-ratio: 1;
+      border: none;
+      background: transparent;
+      border-radius: 9px;
+      font-size: 1.2rem;
+      cursor: pointer;
+      transition: transform 0.15s, background 0.15s;
+      padding: 0;
+    }
+
+    .emoji-opt:hover { background: #EBF5FB; transform: scale(1.2); }
+    .emoji-opt.sel { background: #D7BDE2; }
+
+    .form-acciones {
+      display: flex;
+      gap: 10px;
+      justify-content: flex-end;
+      margin-top: 18px;
+      flex-wrap: wrap;
+    }
+
+    /* El botón de guardar siempre visible al final del formulario */
+    #carta-form .form-acciones {
+      position: sticky;
+      bottom: -1px;
+      background: linear-gradient(to top, var(--blanco-perla) 55%, rgba(250,252,255,0.85));
+      padding: 14px 0 4px;
+      margin-top: 10px;
+    }
+
+    .btn-gris {
+      background: #F0F4F8;
+      color: #6B7A8D;
+    }
+
+    .btn-gris:hover { background: #E4EBF2; }
+
+    .form-error {
+      color: #C0392B;
+      font-size: 0.85rem;
+      text-align: center;
+      min-height: 20px;
+      margin-top: 6px;
+    }
+
+    /* ── CONFIRMAR BORRADO ── */
+    .confirm-box { text-align: center; }
+    .confirm-box .card-icon { animation: none; }
+    .confirm-box p { color: #6B7A8D; line-height: 1.6; margin-bottom: 22px; }
+    .btn-peligro { background: linear-gradient(135deg, #F5B7B1, #E74C3C); color: #fff; }
+
+    /* ── TOAST ── */
+    #toast {
+      position: fixed;
+      left: 50%;
+      bottom: 88px;
+      transform: translate(-50%, 20px);
+      background: rgba(61,74,92,0.94);
+      color: #fff;
+      font-size: 0.88rem;
+      padding: 11px 22px;
+      border-radius: 50px;
+      z-index: 2000;
+      opacity: 0;
+      pointer-events: none;
+      transition: opacity 0.3s ease, transform 0.3s ease;
+    }
+
+    #toast.show { opacity: 1; transform: translate(-50%, 0); }
 
     /* ── SEPARADOR ── */
     .section-sep {
@@ -212,50 +415,16 @@
     <p>Aquí guardé todo lo que siento por ti. Explora cada rincón con calma.</p>
   </header>
 
-  <!-- CARTAS DE AMOR -->
+  <!-- CARTAS DE AMOR (se cargan desde la base de datos) -->
   <div class="section-sep"><span>💌 Mis cartitas para ti</span></div>
 
-  <div class="menu-grid">
-
-    <!-- Carta 1 -->
-    <div class="menu-card" data-modal="modal-carta1">
-      <span class="card-icon">💙</span>
-      <h2>Lo primero que sentí</h2>
-      <p>El momento en que todo cambió para mí</p>
-      <span class="card-tag tag-azul">Abrir carta</span>
-    </div>
-
-    <!-- Carta 2 -->
-    <div class="menu-card" data-modal="modal-carta2">
-      <span class="card-icon">🌸</span>
-      <h2>Lo que más amo de ti</h2>
-      <p>Todo lo que me enamora cada día</p>
-      <span class="card-tag tag-rosa">Abrir carta</span>
-    </div>
-
-    <!-- Carta 3 -->
-    <div class="menu-card" data-modal="modal-carta3">
-      <span class="card-icon">🌙</span>
-      <h2>Lo que sueño contigo</h2>
-      <p>El futuro que imagino a tu lado</p>
-      <span class="card-tag tag-morado">Abrir carta</span>
-    </div>
-
-    <!-- Carta 4 -->
-    <div class="menu-card" data-modal="modal-carta4">
-      <span class="card-icon">✨</span>
-      <h2>Gracias por existir</h2>
-      <p>Todo lo que me has dado sin darte cuenta</p>
-      <span class="card-tag tag-rosa">Abrir carta</span>
-    </div>
-
-  </div>
+  <div class="menu-grid" id="cartas-grid"></div>
 
   <!-- ALMANAQUE -->
   <div class="section-sep" style="margin-top:44px;"><span>📖 Nuestros recuerdos</span></div>
 
   <div class="menu-grid" style="max-width:520px;">
-    <a href="{{ url_for('almanaque') }}" class="menu-card" style="animation-delay:0.2s;">
+    <a href="{{ url_for('almanaque') }}" class="menu-card fade-in-up" style="animation-delay:0.2s;">
       <span class="card-icon">📸</span>
       <h2>Nuestro álbum</h2>
       <p>Cada mes que hemos vivido juntos, guardado para siempre</p>
@@ -264,76 +433,96 @@
   </div>
 
 
-  <!-- ══════════ MODALES ══════════ -->
-
-  <!-- Carta 1 -->
-  <div id="modal-carta1" class="modal-overlay">
+  <!-- ══════════ MODAL: LEER CARTA ══════════ -->
+  <div id="modal-leer" class="modal-overlay">
     <div class="modal-box">
-      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active'); document.body.style.overflow=''">✕</button>
+      <button class="modal-close" type="button">✕</button>
       <div class="carta-content">
         <span class="carta-icon">💙</span>
-        <h2>Lo primero que sentí</h2>
-        <div class="carta-text">
-          Hubo un instante en que te miré y algo dentro de mí se acomodó en un lugar que no sabía que existía. No fue un rayo, fue algo más suave: como cuando una canción te llega sin que estés buscando nada y de pronto ya no puedes imaginar el silencio.
-          <br><br>
-          Desde ese día empecé a notar cosas pequeñas tuyas que no debería notar, y me di cuenta de que ya era tarde para no quererte.
-        </div>
-        <p class="carta-firma">Con todo mi corazón 💙</p>
+        <h2></h2>
+        <div class="carta-text"></div>
+        <p class="carta-firma"></p>
       </div>
     </div>
   </div>
 
-  <!-- Carta 2 -->
-  <div id="modal-carta2" class="modal-overlay">
-    <div class="modal-box">
-      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active'); document.body.style.overflow=''">✕</button>
-      <div class="carta-content">
-        <span class="carta-icon">🌸</span>
-        <h2>Lo que más amo de ti</h2>
-        <div class="carta-text">
-          Amo cómo te ríes sin reservas. Amo que te importan las cosas de verdad. Amo la forma en que ves el mundo, con esa mezcla de ternura, belleza y fuerza de voluntad que pocas personas tienen.
-          <br><br>
-          Amo que existas, que estés aquí, que seas tan tú. Y amo que por alguna razón hermosa, decidiste quedarte cerca de mí.
+  <!-- ══════════ MODAL: CREAR / EDITAR ══════════ -->
+  <div id="modal-form" class="modal-overlay">
+    <div class="modal-box modal-form">
+      <button class="modal-close" type="button">✕</button>
+      <h2 class="form-titulo" id="form-titulo-modal">Nueva cartita 💌</h2>
+
+      <form id="carta-form" autocomplete="off">
+        <input type="hidden" id="f-id">
+
+        <div class="campo">
+          <label>Emoji de la cartita</label>
+          <div class="emoji-zona">
+            <div class="emoji-preview" id="emoji-preview">💙</div>
+            <input type="text" id="f-emoji" maxlength="16" placeholder="Elige abajo o pega el tuyo aquí 🫶">
+          </div>
+          <div class="emoji-grid" id="emoji-grid"></div>
         </div>
-        <p class="carta-firma">Siempre tuyo 🌸</p>
-      </div>
+
+        <div class="campo">
+          <label for="f-titulo">Título *</label>
+          <input type="text" id="f-titulo" name="titulo" maxlength="80" placeholder="Ej: Lo primero que sentí" required>
+        </div>
+
+        <div class="campo">
+          <label for="f-subtitulo">Frase corta (se ve en la tarjeta)</label>
+          <input type="text" id="f-subtitulo" name="subtitulo" maxlength="140" placeholder="Ej: El momento en que todo cambió">
+        </div>
+
+        <div class="campo">
+          <label for="f-texto">Mensaje *</label>
+          <textarea id="f-texto" name="texto" maxlength="6000" placeholder="Escríbele todo lo que sientas…" required></textarea>
+          <div class="ayuda">Deja una línea en blanco para separar párrafos.</div>
+        </div>
+
+        <div class="campo">
+          <label for="f-firma">Firma</label>
+          <input type="text" id="f-firma" name="firma" maxlength="120" placeholder="Ej: Con todo mi corazón 💙">
+        </div>
+
+        <div class="campo">
+          <label for="f-color">Color de la etiqueta</label>
+          <select id="f-color" name="color">
+            <option value="azul">Azul cielo</option>
+            <option value="rosa">Rosa sakura</option>
+            <option value="morado">Morado pastel</option>
+            <option value="verde">Verde menta</option>
+            <option value="durazno">Durazno</option>
+          </select>
+        </div>
+
+        <div class="form-error" id="form-error"></div>
+
+        <div class="form-acciones">
+          <button type="button" class="btn btn-gris modal-close" style="position:static;width:auto;height:auto;border-radius:50px;">Cancelar</button>
+          <button type="submit" class="btn btn-primary" id="btn-guardar">Guardar cartita 💙</button>
+        </div>
+      </form>
     </div>
   </div>
 
-  <!-- Carta 3 -->
-  <div id="modal-carta3" class="modal-overlay">
-    <div class="modal-box">
-      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active'); document.body.style.overflow=''">✕</button>
-      <div class="carta-content">
-        <span class="carta-icon">🌙</span>
-        <h2>Lo que sueño contigo</h2>
-        <div class="carta-text">
-          Sueño con más tardes juntos, con más risas tontas, con seguir conociéndote en cada nueva versión que vayas siendo.
-          <br><br>
-          Sueño con que cuando lleguen días difíciles, podamos apoyarnos. Y sueño, sobre todo, con que sigas eligiéndome así como yo te elijo a ti, cada mañana, sin dudarlo.
+  <!-- ══════════ MODAL: CONFIRMAR BORRADO ══════════ -->
+  <div id="modal-borrar" class="modal-overlay">
+    <div class="modal-box" style="max-width:400px;">
+      <button class="modal-close" type="button">✕</button>
+      <div class="confirm-box">
+        <span class="card-icon">🗑️</span>
+        <h2 style="font-size:1.25rem;margin-bottom:10px;">¿Borrar esta cartita?</h2>
+        <p>«<strong id="borrar-nombre"></strong>» se eliminará para siempre.</p>
+        <div class="form-acciones" style="justify-content:center;">
+          <button type="button" class="btn btn-gris modal-close" style="position:static;width:auto;height:auto;border-radius:50px;">Mejor no</button>
+          <button type="button" class="btn btn-peligro" id="btn-borrar-si">Sí, borrar</button>
         </div>
-        <p class="carta-firma">Contigo siempre 🌙</p>
-      </div>
-    </div>
-  </div>
-
-  <!-- Carta 4 -->
-  <div id="modal-carta4" class="modal-overlay">
-    <div class="modal-box">
-      <button class="modal-close" onclick="this.closest('.modal-overlay').classList.remove('active'); document.body.style.overflow=''">✕</button>
-      <div class="carta-content">
-        <span class="carta-icon">✨</span>
-        <h2>Gracias por existir</h2>
-        <div class="carta-text">
-          Gracias por hacer que los días normales se sientan especiales. Por las conversaciones largas, por las veces que me sacas de quisio y no lo digo de mala manera es bonito la verdad, por la calidez que traes sin ni siquiera intentarlo.
-          <br><br>
-          Gracias por ser la persona que eres. Este regalo lo hice con todo mi amor para decirte que te quiero más de lo que sé expresar y te prometo que te hare la mujer mas feliz del mundo.
-        </div>
-        <p class="carta-firma">Te amo, leonor mi querida mujer y futura esposa✨</p>
       </div>
     </div>
   </div>
 
   <script src="{{ url_for('static', filename='js/main.js') }}"></script>
+  <script src="{{ url_for('static', filename='js/cartas.js') }}"></script>
 </body>
 </html>
