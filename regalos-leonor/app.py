@@ -2,7 +2,10 @@ from flask import Flask, render_template, jsonify, request, session, redirect, u
 from functools import wraps
 import os
 
-from storage import crear_store, limpiar_carta
+from storage import crear_store, limpiar_carta, CollectionStore
+from werkzeug.utils import secure_filename
+from datetime import datetime
+
 
 # Carga el archivo .env si existe (solo para desarrollo local)
 try:
@@ -19,6 +22,12 @@ PASSWORD = os.environ.get('APP_PASSWORD', "01/12/2025")
 
 # Base de datos de las cartitas (MongoDB si hay MONGODB_URI, si no un JSON local)
 store, aviso_store = crear_store()
+items_uri = os.environ.get('MONGODB_URI', '').strip()
+data_dir = os.path.join(os.path.dirname(__file__), 'data')
+recuerdos_store = CollectionStore(items_uri, 'recuerdos', os.path.join(data_dir, 'recuerdos.json'))
+planes_store = CollectionStore(items_uri, 'planes', os.path.join(data_dir, 'planes.json'))
+UPLOAD_DIR = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
+os.makedirs(UPLOAD_DIR, exist_ok=True)
 if aviso_store:
     print(f"[cartas] AVISO: {aviso_store}")
 else:
@@ -86,6 +95,43 @@ def verify():
 def salir():
     session.clear()
     return redirect(url_for('index'))
+
+
+@app.route('/api/recuerdos', methods=['GET', 'POST'])
+@login_requerido
+def api_recuerdos():
+    if request.method == 'GET':
+        return jsonify({'success': True, 'recuerdos': recuerdos_store.listar()})
+    foto = request.files.get('foto')
+    fecha = (request.form.get('fecha') or '').strip()
+    descripcion = (request.form.get('descripcion') or '').strip()
+    if not foto or not fecha:
+        return jsonify({'success': False, 'error': 'La foto y la fecha son obligatorias.'}), 400
+    extension = os.path.splitext(secure_filename(foto.filename))[1].lower() or '.jpg'
+    nombre = f"{os.urandom(8).hex()}{extension}"
+    foto.save(os.path.join(UPLOAD_DIR, nombre))
+    item = recuerdos_store.crear({'foto': url_for('static', filename=f'uploads/{nombre}'), 'fecha': fecha, 'descripcion': descripcion})
+    return jsonify({'success': True, 'recuerdo': item}), 201
+
+
+@app.route('/api/planes', methods=['GET', 'POST'])
+@login_requerido
+def api_planes():
+    if request.method == 'GET': return jsonify({'success': True, 'planes': planes_store.listar()})
+    data = request.get_json(silent=True) or {}
+    required = ('lugar', 'fecha', 'hora', 'estado')
+    if any(not str(data.get(k, '')).strip() for k in required):
+        return jsonify({'success': False, 'error': 'Completa lugar, fecha, hora y estado.'}), 400
+    item = planes_store.crear({k: str(data[k]).strip() for k in (*required, 'nota')})
+    return jsonify({'success': True, 'plan': item}), 201
+
+
+@app.route('/api/planes/<plan_id>', methods=['PUT', 'DELETE'])
+@login_requerido
+def api_plan_detalle(plan_id):
+    if request.method == 'DELETE': return jsonify({'success': planes_store.borrar(plan_id)})
+    item = planes_store.actualizar(plan_id, request.get_json(silent=True) or {})
+    return jsonify({'success': bool(item), 'plan': item}), (200 if item else 404)
 
 
 # ──────────────────────────────────────────────
