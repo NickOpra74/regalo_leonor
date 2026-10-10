@@ -60,6 +60,18 @@ def almanaque():
     return render_template('almanaque.html')
 
 
+@app.route('/tiempo')
+@login_requerido
+def tiempo():
+    return render_template('tiempo.html')
+
+
+@app.route('/planes')
+@login_requerido
+def planes():
+    return render_template('planes.html')
+
+
 @app.route('/verify', methods=['POST'])
 def verify():
     data = request.get_json(silent=True)
