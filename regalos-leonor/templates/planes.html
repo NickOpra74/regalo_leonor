@@ -1,0 +1,31 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Ideas para salir 💙</title>
+  <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
+  <style>
+    body { background:linear-gradient(160deg,#EBF5FB 0%,#F4ECF7 50%,#FEF0F2 100%); min-height:100vh; padding:0 20px 80px; }
+    .feature-header { text-align:center; padding:42px 10px 24px; position:relative; z-index:2; }
+    .feature-header h1 { color:#3D4A5C; font-size:clamp(1.8rem,5vw,2.6rem); font-style:italic; margin:10px 0 8px; }
+    .feature-header p { color:#C39BD3; font-family:'Dancing Script',cursive; font-size:1.15rem; }
+    .back-link { display:inline-flex; color:#85C1E9; text-decoration:none; font-weight:700; }
+    .plans-grid { max-width:900px; margin:auto; display:grid; grid-template-columns:repeat(auto-fit,minmax(230px,1fr)); gap:18px; position:relative; z-index:2; }
+    .plan { background:rgba(255,255,255,.8); backdrop-filter:blur(12px); border-radius:22px; padding:24px 22px; box-shadow:0 6px 24px rgba(133,193,233,.17); border:1px solid rgba(255,255,255,.75); transition:transform .3s ease; }
+    .plan:hover { transform:translateY(-5px); }.plan-icon { font-size:2.2rem; display:block; margin-bottom:12px; }.plan h2 { color:#3D4A5C; font-size:1.15rem; margin-bottom:8px; }.plan p { color:#6B7A8D; line-height:1.55; font-size:.9rem; }.plan small { display:inline-block; margin-top:16px; padding:5px 12px; border-radius:50px; background:#CDF0DC; color:#1E8449; font-weight:700; font-size:.72rem; text-transform:uppercase; }
+  </style>
+</head>
+<body>
+  <div class="petal-container"></div>
+  <header class="feature-header"><a class="back-link" href="{{ url_for('menu') }}">← Volver</a><h1>Ideas para nuestras salidas 🗺️</h1><p>Planes sencillos para seguir llenando el almanaque de recuerdos.</p></header>
+  <main class="plans-grid">
+    <article class="plan"><span class="plan-icon">🌅</span><h2>Ver el atardecer</h2><p>Buscar un lugar bonito, llevar algo para compartir y disfrutar el cielo juntos.</p><small>Romántico</small></article>
+    <article class="plan"><span class="plan-icon">🍿</span><h2>Cine en casa</h2><p>Elegir una película, preparar snacks y hacer nuestra propia noche de estreno.</p><small>Tranquilo</small></article>
+    <article class="plan"><span class="plan-icon">☕</span><h2>Ir por un cafecito</h2><p>Conocer una cafetería nueva y platicar sin mirar el reloj.</p><small>Para conversar</small></article>
+    <article class="plan"><span class="plan-icon">🌳</span><h2>Picnic en el parque</h2><p>Una manta, comida rica y muchas fotos de un día al aire libre.</p><small>Aventurero</small></article>
+    <article class="plan"><span class="plan-icon">🎨</span><h2>Crear algo juntos</h2><p>Pintar, cocinar o hacer manualidades para guardar un recuerdo hecho por los dos.</p><small>Creativo</small></article>
+    <article class="plan"><span class="plan-icon">📸</span><h2>Ruta de fotos</h2><p>Caminar por un sitio bonito y llenar una nueva página de nuestro almanaque.</p><small>Especial</small></article>
+  </main>
+</body>
+</html>
