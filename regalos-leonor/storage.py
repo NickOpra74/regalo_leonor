@@ -275,6 +275,61 @@ class JsonStore:
 # ──────────────────────────────────────────────
 #  FÁBRICA
 # ──────────────────────────────────────────────
+class CollectionStore:
+    """Colección sencilla para recuerdos y planes, en MongoDB o JSON."""
+    def __init__(self, uri, collection, ruta_json):
+        self.collection = collection
+        self.ruta_json = ruta_json
+        self.lock = Lock()
+        self.mongo = None
+        if uri:
+            try:
+                from pymongo import MongoClient
+                self.mongo = MongoClient(uri, serverSelectionTimeoutMS=8000, tz_aware=True)["regalo_leonor"][collection]
+            except Exception:
+                self.mongo = None
+        os.makedirs(os.path.dirname(ruta_json) or ".", exist_ok=True)
+        if not os.path.exists(ruta_json):
+            self._write([])
+
+    def _read(self):
+        if self.mongo is not None:
+            return [dict(x, id=x.pop("_id")) for x in self.mongo.find().sort("created", 1)]
+        try:
+            with open(self.ruta_json, "r", encoding="utf-8") as f: return json.load(f)
+        except (OSError, json.JSONDecodeError): return []
+
+    def _write(self, items):
+        if self.mongo is not None:
+            self.mongo.delete_many({})
+            if items: self.mongo.insert_many([dict(x, _id=x.pop("id")) for x in items])
+            return
+        tmp = self.ruta_json + ".tmp"
+        with open(tmp, "w", encoding="utf-8") as f: json.dump(items, f, ensure_ascii=False, indent=2)
+        os.replace(tmp, self.ruta_json)
+
+    def listar(self): return self._read()
+
+    def crear(self, item):
+        with self.lock:
+            item = dict(item); item.update({"id": uuid.uuid4().hex, "created": _ahora()})
+            items = self._read(); items.append(item); self._write(items); return item
+
+    def actualizar(self, item_id, changes):
+        with self.lock:
+            items = self._read()
+            for item in items:
+                if item.get("id") == item_id:
+                    item.update(changes); self._write(items); return item
+        return None
+
+    def borrar(self, item_id):
+        with self.lock:
+            items = self._read(); kept = [x for x in items if x.get("id") != item_id]
+            if len(kept) == len(items): return False
+            self._write(kept); return True
+
+
 def crear_store(uri=None, ruta_json=None):
     """Devuelve (store, aviso). aviso != None cuando hubo que usar el respaldo."""
     uri = uri if uri is not None else os.environ.get("MONGODB_URI", "").strip()
