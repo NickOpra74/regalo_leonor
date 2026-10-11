@@ -285,7 +285,9 @@ class CollectionStore:
         if uri:
             try:
                 from pymongo import MongoClient
-                self.mongo = MongoClient(uri, serverSelectionTimeoutMS=8000, tz_aware=True)["regalo_leonor"][collection]
+                client = MongoClient(uri, serverSelectionTimeoutMS=8000, tz_aware=True)
+                client.admin.command('ping')
+                self.mongo = client[os.environ.get('MONGODB_DB', 'regalo_leonor')][collection]
             except Exception:
                 self.mongo = None
         os.makedirs(os.path.dirname(ruta_json) or ".", exist_ok=True)
