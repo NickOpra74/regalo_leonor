@@ -5,6 +5,14 @@ import os
 from storage import crear_store, limpiar_carta, CollectionStore
 from werkzeug.utils import secure_filename
 from datetime import datetime
+from io import BytesIO
+
+try:
+    from pymongo import MongoClient
+    import gridfs
+except ImportError:
+    MongoClient = None
+    gridfs = None
 
 
 # Carga el archivo .env si existe (solo para desarrollo local)
@@ -28,6 +36,17 @@ recuerdos_store = CollectionStore(items_uri, 'recuerdos', os.path.join(data_dir,
 planes_store = CollectionStore(items_uri, 'planes', os.path.join(data_dir, 'planes.json'))
 UPLOAD_DIR = os.path.join(os.path.dirname(__file__), 'static', 'uploads')
 os.makedirs(UPLOAD_DIR, exist_ok=True)
+media_db = None
+media_fs = None
+if items_uri and MongoClient and gridfs:
+    try:
+        media_client = MongoClient(items_uri, serverSelectionTimeoutMS=8000, tz_aware=True)
+        media_client.admin.command('ping')
+        media_db = media_client[os.environ.get('MONGODB_DB', 'regalo_leonor')]
+        media_fs = gridfs.GridFS(media_db)
+        print('[recuerdos] Fotos conectadas a MongoDB GridFS ✔')
+    except Exception as error:
+        print(f'[recuerdos] AVISO: no se pudo conectar GridFS: {error}')
 if aviso_store:
     print(f"[cartas] AVISO: {aviso_store}")
 else:
@@ -108,10 +127,27 @@ def api_recuerdos():
     if not foto or not fecha:
         return jsonify({'success': False, 'error': 'La foto y la fecha son obligatorias.'}), 400
     extension = os.path.splitext(secure_filename(foto.filename))[1].lower() or '.jpg'
-    nombre = f"{os.urandom(8).hex()}{extension}"
-    foto.save(os.path.join(UPLOAD_DIR, nombre))
-    item = recuerdos_store.crear({'foto': url_for('static', filename=f'uploads/{nombre}'), 'fecha': fecha, 'descripcion': descripcion})
+    if media_fs is not None:
+        file_id = media_fs.put(foto.stream.read(), filename=secure_filename(foto.filename) or f'recuerdo{extension}', content_type=foto.mimetype or 'image/jpeg')
+        foto_url = url_for('media_file', file_id=str(file_id))
+    else:
+        nombre = f"{os.urandom(8).hex()}{extension}"
+        foto.save(os.path.join(UPLOAD_DIR, nombre))
+        foto_url = url_for('static', filename=f'uploads/{nombre}')
+    item = recuerdos_store.crear({'foto': foto_url, 'fecha': fecha, 'descripcion': descripcion})
     return jsonify({'success': True, 'recuerdo': item}), 201
+
+
+@app.route('/media/<file_id>')
+def media_file(file_id):
+    if media_fs is None:
+        return jsonify({'error': 'Almacenamiento de fotos no disponible'}), 503
+    try:
+        from bson import ObjectId
+        stored = media_fs.get(ObjectId(file_id))
+    except Exception:
+        return jsonify({'error': 'Foto no encontrada'}), 404
+    return app.response_class(stored.read(), mimetype=stored.content_type or 'application/octet-stream')
 
 
 @app.route('/api/planes', methods=['GET', 'POST'])
